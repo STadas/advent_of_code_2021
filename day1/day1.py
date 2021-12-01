@@ -22,12 +22,10 @@ def xd():
     #         p2 += 1
     #     prev = curr
 
-    data = list(map(int, open(str(Path(__file__).parent.resolve()) + "/input").read().splitlines()))
-    p1 = sum(map(lambda i: data[i] > data[i-1], range(1, len(data))))
-    p2 = sum(map(lambda i: sum(data[i:i+3]) > sum(data[i-1:i+2]), range(1, len(data))))
+    # print(f"{p1=}")
+    # print(f"{p2=}")
 
-    print(f"{p1=}")
-    print(f"{p2=}")
+    print("p1="+str(sum(map(lambda i: data[i] > data[i-1], range(1, len(data := list(map(int, open(str(Path(__file__).parent.resolve()) + "/input")))))))), "\np2=" + str(sum(map(lambda i: sum(data[i:i+3]) > sum(data[i-1:i+2]), range(1, len(data))))))
 
 
 if __name__ == "__main__":
