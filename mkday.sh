@@ -4,5 +4,6 @@ if [[ -d "day$1" ]]; then
 else
     cp -r "template" "day$1"
     mv "day$1/template.py" "day$1/day$1.py"
+
     echo "created day$1"
 fi
