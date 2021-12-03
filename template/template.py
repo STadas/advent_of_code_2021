@@ -2,18 +2,14 @@ from pathlib import Path
 
 
 def xd():
-    with open(str(Path(__file__).parent.resolve()) + "/input") as f:
-        data = f.read()
-
-    # data = data.splitlines()
-    # data = tuple(map(int, data))
+    data = open(str(Path(__file__).parent.resolve()) + "/input").read()#.splitlines()
 
     p1 = 0
     for line in data:
         print(line)
 
     p2 = 0
-    for i in data:
+    for line in data:
         pass
 
     print(f"{p1=}")
