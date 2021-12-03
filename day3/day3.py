@@ -6,8 +6,8 @@ def fltr(data, compare):
     i = 0
     filtered = list(data)
     while len(filtered) > 1:
-        needed_bit = int(compare(sum([b[i] for b in filtered]), len(filtered) / 2))
-        checked = list(filter(lambda x: x[i] == needed_bit, filtered))
+        bit = int(compare(sum([b[i] if b[i] else -1 for b in filtered]), 0))
+        checked = list(filter(lambda x: x[i] == bit, filtered))
         if len(checked) > 0:
             filtered = checked
         if len(filtered) == 1:
@@ -19,11 +19,9 @@ def fltr(data, compare):
 def xd():
     data = open(str(Path(__file__).parent.absolute()) + "/input").read().splitlines()
 
-    half_point = len(data) / 2
-
     data = [[int(x) for x in line] for line in data]
-    one_c = reduce(lambda x, y: [xb + yb for xb, yb in zip(x, y)], data)
-    cmn = int("".join(str(int(x >= half_point)) for x in one_c), 2)
+    one_c = reduce(lambda x, y: [xb + (1 if yb else -1) for xb, yb in zip(x, y)], data)
+    cmn = int("".join(str(int(x >= 0)) for x in one_c), 2)
 
     p1 = cmn * (~cmn & int("1" * len(data[0]), 2))
     p2 = fltr(data, lambda x, y: x >= y) * fltr(data, lambda x, y: x < y)
