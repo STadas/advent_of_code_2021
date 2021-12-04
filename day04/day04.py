@@ -2,58 +2,43 @@ from pathlib import Path
 
 
 def xd():
-    data = open(str(Path(__file__).parent.resolve()) + "/input").read().split("\n\n")
+    data = open(str(Path(__file__).parent.resolve()) + "/input").read().split("\n"*2)
 
-    draw = [int(x) for x in data[0].split(",")]
-    boards = []
-    for section in data[1:]:
-        board = []
-        lines = section.splitlines()
-        for y in range(len(lines)):
-            board.append([])
-            for num in lines[y].split():
-                board[y].append(int(num))
-        boards.append(board)
+    draw = tuple(int(x) for x in data[0].split(","))
+    boards = [[[int(n) for n in l.split()] for l in s.splitlines()] for s in data[1:]]
 
     max_y = len(boards[0])
     max_x = len(boards[0][0])
-
     won_at = [len(draw)] * len(boards)
     win_sum = [0] * len(boards)
 
-    for b, board in enumerate(boards):
-        s_board = set(n for l in board for n in l)
-        for x in range(max_x):
-            count = 0
-            furthest = 0
-            for y in range(max_y):
-                for i, n in enumerate(draw):
-                    if n == board[y][x]:
-                        count += 1
-                        if furthest < i:
-                            furthest = i
-                        break
-            if count == max_y and furthest < won_at[b]:
-                won_at[b] = furthest
-                win_sum[b] = sum(s_board.difference(draw[:furthest + 1]))
+    for b in range(len(boards)):
+        s_board = set(n for l in boards[b] for n in l)
+        count_y = [0] * max_y
+        furthest_y = [0] * max_y
 
         for y in range(max_y):
-            count = 0
-            furthest = 0
+            count_x = 0
+            furthest_x = 0
+
             for x in range(max_x):
-                for i, n in enumerate(draw):
-                    if n == board[y][x]:
-                        count += 1
-                        if furthest < i:
-                            furthest = i
-                        break
-            if count == max_x and furthest < won_at[b]:
-                won_at[b] = furthest
-                win_sum[b] = sum(s_board.difference(draw[:furthest + 1]))
+                i = draw.index(boards[b][y][x]) if boards[b][y][x] in draw else None
+                if i is not None:
+                    count_x += 1
+                    furthest_x = i if furthest_x < i else furthest_x
+                    count_y[x] += 1
+                    furthest_y[x] = i if furthest_y[x] < i else furthest_y[x]
+
+                if count_y[x] == max_y and furthest_y[x] < won_at[b]:
+                    won_at[b] = furthest_y[x]
+                    win_sum[b] = sum(s_board.difference(draw[:furthest_y[x] + 1]))
+
+            if count_x == max_x and furthest_x < won_at[b]:
+                won_at[b] = furthest_x
+                win_sum[b] = sum(s_board.difference(draw[:furthest_x + 1]))
 
     p1 = draw[min(won_at)] * win_sum[won_at.index(min(won_at))]
     p2 = draw[max(won_at)] * win_sum[won_at.index(max(won_at))]
-
     print(f"{p1=}")
     print(f"{p2=}")
 
