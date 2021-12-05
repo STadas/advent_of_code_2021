@@ -1,37 +1,38 @@
 from pathlib import Path
-from collections import defaultdict
+
+
+def add_or_default(dict_, key, val = 1, default = 1):
+    if key in dict_:
+        dict_[key] += val
+    else:
+        dict_[key] = default
 
 
 def xd():
     data = open(str(Path(__file__).parent.resolve()) + "/input").read().splitlines()
 
-    grid = defaultdict(lambda: 0)
-    grid2 = defaultdict(lambda: 0)
+    grid = {}
+    grid2 = {}
     for line in data:
-        x1, y1, x2, y2 = [int(x) for x in line.replace(" -> ", ",").split(",")]
+        x1, y1, x2, y2 = (int(x) for x in line.replace(" -> ", ",").split(","))
+
         if y1 == y2:
-            if x1 > x2:
-                x1, x2 = x2, x1
-            for x in range(x1, x2 + 1):
-                grid[x, y1] += 1
-                grid2[x, y1] += 1
+            mod = 1 if x1 < x2 else -1
+            for i in range(abs(x2 - x1) + 1):
+                add_or_default(grid, (x1 + mod * i, y1))
+                add_or_default(grid2, (x1 + mod * i, y1))
 
         elif x1 == x2:
-            if y1 > y2:
-                y1, y2 = y2, y1
-            for y in range(y1, y2 + 1):
-                grid[x1, y] += 1
-                grid2[x1, y] += 1
+            mod = 1 if y1 < y2 else -1
+            for i in range(abs(y2 - y1) + 1):
+                add_or_default(grid, (x1, y1 + mod * i))
+                add_or_default(grid2, (x1, y1 + mod * i))
 
         else:
-            x = x1
-            y = y1
-            do_while = True
-            while do_while:
-                do_while = x != x2 and y != y2
-                grid2[x, y] += 1
-                x += 1 if x1 < x2 else -1
-                y += 1 if y1 < y2 else -1
+            x_mod = 1 if x1 < x2 else -1
+            y_mod = 1 if y1 < y2 else -1
+            for i in range(abs(x2 - x1) + 1):
+                add_or_default(grid2, (x1 + i * x_mod, y1 + i * y_mod))
 
     p1 = sum(x > 1 for x in grid.values())
     p2 = sum(x > 1 for x in grid2.values())
