@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def xd():
-    data = open(str(Path(__file__).parent.resolve()) + "/input").read().split("\n"*2)
+    data = open(str(Path(__file__).parent.absolute()) + "/input").read().split("\n"*2)
 
     draw = tuple(int(x) for x in data[0].split(","))
     boards = [[[int(n) for n in l.split()] for l in s.splitlines()] for s in data[1:]]

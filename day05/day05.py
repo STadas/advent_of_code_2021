@@ -9,7 +9,7 @@ def add_or_default(dict_, key, val = 1, default = 1):
 
 
 def xd():
-    data = open(str(Path(__file__).parent.resolve()) + "/input").read().splitlines()
+    data = open(str(Path(__file__).parent.absolute()) + "/input").read().splitlines()
 
     grid = {}
     grid2 = {}

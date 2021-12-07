@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 def xd():
-    data = [int(x) for x in open(str(Path(__file__).parent.resolve()) + "/input").read().split(",")]
+    data = [int(x) for x in open(str(Path(__file__).parent.absolute()) + "/input").read().split(",")]
     counts = [data.count(i) for i in range(9)]
 
     for day in range(256):
