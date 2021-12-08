@@ -1,57 +1,42 @@
 from pathlib import Path
 
 
-def check(word, against, needed_len):
-    word = set(word)
-    against = set(against)
-    return len(word & against) == needed_len and word != against
+def chk(w, against, needed_len):
+    w, against = set(w), set(against)
+    return len(w & against) == needed_len and w != against
 
 
-def decode(inp, outp):
-    decoded = {}
-    combined = inp + outp
-    for word in combined:
-        if len(word) == 2:
-            decoded["1"] = word
-        elif len(word) == 3:
-            decoded["7"] = word
-        elif len(word) == 4:
-            decoded["4"] = word
-        elif len(word) == 7:
-            decoded["8"] = word
+def decode(ws):
+    d = {}
+    for w in ws:
+        wl = len(w)
+        num = lm[wl] if wl in (lm := {2: 1, 3: 7, 4: 4, 7: 8}) else None
+        if num:
+            d[num] = w
 
-    for word in combined:
-        if len(word) == 5:
-            if check(word, decoded["1"], 2):
-                decoded["3"] = word
-            elif check(word, decoded["4"], 3):
-                decoded["5"] = word
-            else:
-                decoded["2"] = word
-        elif len(word) == 6:
-            if check(word, decoded["4"], 4):
-                decoded["9"] = word
-            elif check(word, decoded["1"], 2):
-                decoded["0"] = word
-            else:
-                decoded["6"] = word
-    return {v: k for k, v in decoded.items()}
+    for w in ws:
+        wl = len(w)
+        if wl == 5:
+            num = 3 if chk(w, d[1], 2) else 5 if chk(w, d[4], 3) else 2
+            d[num] = w
+        elif wl == 6:
+            num = 9 if chk(w, d[4], 4) else 0 if chk(w, d[1], 2) else 6
+            d[num] = w
+    return {v: str(k) for k, v in d.items()}
 
 
 def xd():
     data = open(str(Path(__file__).parent.absolute()) + "/input").read().splitlines()
 
-    p1 = 0
-    p2 = 0
+    p1, p2 = 0, 0
     for line in data:
         inp, outp = (x.split() for x in line.split(" | "))
-        translator = decode(inp, outp)
+        translator = decode(inp + outp)
         decoded = ""
-        for word in outp:
-            if len(word) in (2, 3, 4, 7):
-                p1 += 1
+        for w in outp:
+            p1 += len(w) in (2, 3, 4, 7)
             for k in translator.keys():
-                if set(word) == set(k):
+                if set(w) == set(k):
                     decoded += translator[k]
                     break
         p2 += int(decoded)
