@@ -3,6 +3,7 @@ from functools import reduce
 
 
 def basin(data, x, y, basin_coords):
+    basin_coords.add((x, y))
     if y > 0 and data[y-1][x] != 9 and data[y-1][x] > data[y][x]:
         basin_coords.add((x, y-1))
         basin(data, x, y-1, basin_coords)
@@ -22,7 +23,7 @@ def xd():
     data = [[int(c) for c in line] for line in data]
 
     p1 = 0
-    basins = []
+    basin_sizes = []
     for y, line in enumerate(data):
         for x, depth in enumerate(line):
             checkem = []
@@ -36,13 +37,9 @@ def xd():
                 checkem.append(data[y][x+1])
             if all(depth < d for d in checkem):
                 p1 += depth + 1
-                basin_coords = set()
-                basin_coords.add((x, y))
-                basin(data, x, y, basin_coords)
-                basins.append(basin_coords)
-
-    print(basins)
-    p2 = reduce(lambda x, y: x * y, sorted(len(b) for b in basins)[-3:])
+                basin(data, x, y, basin_coords := set())
+                basin_sizes.append(len(basin_coords))
+    p2 = reduce(lambda x, y: x * y, sorted(basin_sizes)[-3:])
 
     print(f"{p1=}")
     print(f"{p2=}")
