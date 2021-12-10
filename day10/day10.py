@@ -1,8 +1,11 @@
 from pathlib import Path
+from functools import reduce
 
 
 def xd():
     data = open(str(Path(__file__).parent.absolute()) + "/input").read().splitlines()
+
+    matching = {"(": ")", "[": "]", "{": "}", "<": ">"}
     table = {")": 3, "]": 57, "}": 1197, ">": 25137}
     table2 = {")": 1, "]": 2, "}": 3, ">": 4}
 
@@ -10,29 +13,15 @@ def xd():
     scores = []
     for line in data:
         stack = []
-        corrupted = False
         for c in line:
-            if c == "(":
-                stack.append(")")
-            elif c == "[":
-                stack.append("]")
-            elif c == "{":
-                stack.append("}")
-            elif c == "<":
-                stack.append(">")
+            if c in matching:
+                stack.append(matching[c])
             else:
-                closing = stack.pop()
-                if closing != c:
-                    corrupted = True
+                if stack.pop() != c:
                     p1 += table[c]
                     break
-        if not corrupted:
-            score = 0
-            while len(stack) > 0:
-                c = stack.pop()
-                score *= 5
-                score += table2[c]
-            scores.append(score)
+        else:
+            scores.append(reduce(lambda x, y: x * 5 + table2[y], (0, *reversed(stack))))
     p2 = sorted(scores)[len(scores) // 2]
 
     print(f"{p1=}")
