@@ -5,12 +5,11 @@ def check_n_flash(flashes, data, y, x):
     if data[y][x] > 9:
         data[y][x] = 0
         flashes.add((y, x))
-        for yn in range(y-1, y+2):
-            for xn in range(x-1, x+2):
-                if 0 <= yn < len(data) and 0 <= xn < len(data[0]) and (yn, xn) != (y, x):
-                    if data[yn][xn] != 0:
-                        data[yn][xn] += 1
-                        check_n_flash(flashes, data, yn, xn)
+        for yn in range(y - 1, y + 2):
+            for xn in range(x - 1, x + 2):
+                if 0 <= yn < len(data) and 0 <= xn < len(data[0]) and data[yn][xn] != 0:
+                    data[yn][xn] += 1
+                    check_n_flash(flashes, data, yn, xn)
 
 
 def xd():
@@ -21,9 +20,6 @@ def xd():
     p2 = 0
     i = 0
     while p2 == 0:
-        if i == 195:
-            for line in data:
-                print(line)
         flashes = set()
         for y, line in enumerate(data):
             for x, num in enumerate(line):
