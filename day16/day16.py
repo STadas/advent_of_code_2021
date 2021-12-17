@@ -1,5 +1,4 @@
 from pathlib import Path
-import binascii
 from functools import reduce
 
 
@@ -28,38 +27,32 @@ def parse_packet(p):
                 break
         return p_ver, 7 + len(lit_str) + i // 5, int(lit_str, 2)
     else:
-        p_len_id = p_body[0]
-        p_body = p_body[1:]
+        p_len_id, p_body = p_body[0], p_body[1:]
+        mod = 15 if p_len_id == "0" else 11
+        sp_limit, p_body = int(p_body[:mod], 2), p_body[mod:]
+
         sp_pos = 0
-        literal_vals = []
+        lit_vals = []
 
         if p_len_id == "0":
-            sp_len_combined = int(p_body[:15], 2)
-            p_body = p_body[15:]
-            while sp_pos + 1 < sp_len_combined:
+            while sp_pos + 1 < sp_limit:
                 sp_ver, sp_len, val = parse_packet(p_body[sp_pos:])
                 p_ver += sp_ver
                 sp_pos += sp_len
-                literal_vals.append(val)
-            return p_ver, 22 + sp_pos, op[p_type](literal_vals)
+                lit_vals.append(val)
         else:
-            sp_count = int(p_body[:11], 2)
-            p_body = p_body[11:]
-            for i in range(sp_count):
+            for i in range(sp_limit):
                 sp_ver, sp_len, val = parse_packet(p_body[sp_pos:])
                 p_ver += sp_ver
                 sp_pos += sp_len
-                literal_vals.append(val)
-            return p_ver, 18 + sp_pos, op[p_type](literal_vals)
+                lit_vals.append(val)
+        return p_ver, mod + 7 + sp_pos, op[p_type](lit_vals)
 
 
 def xd():
     data = open(str(Path(__file__).parent.absolute()) + "/input").read().splitlines()
-
     bin_str = bin(int(data[0], 16))[2:].zfill(4)
-    bin_str = "0" * ((4 - len(bin_str)) % 4) + bin_str
-
-    p1, _, p2 = parse_packet(bin_str)
+    p1, _, p2 = parse_packet("0" * ((4 - len(bin_str)) % 4) + bin_str)
     print(f"{p1=}")
     print(f"{p2=}")
 
