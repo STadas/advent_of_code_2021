@@ -21,7 +21,6 @@ def fire(xr, yr, xv, yv):
     return None
 
 
-
 def xd():
     data = open(str(Path(__file__).parent.absolute()) + "/input").read().strip()
     xr, yr = [[int(x) for x in s[s.find("=") + 1:].split("..")] for s in data.split(", ")]
