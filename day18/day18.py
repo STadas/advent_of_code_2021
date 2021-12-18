@@ -1,28 +1,29 @@
 from pathlib import Path
 
 
-def explode(line):
-    depth = 0
-    for i, c in enumerate(line):
-        depth += 1 if c == "[" else -1 if c == "]" else 0
-        if depth == 5:
-            for j in range(i - 1, -1, -1):
-                if isinstance(line[j], int):
-                    line[j] += line[i + 1]
+def reduce(line):
+    while True:
+        depth = 0
+        for i, c in enumerate(line):
+            depth += 1 if c == "[" else -1 if c == "]" else 0
+            if depth == 5:
+                for j in range(i - 1, -1, -1):
+                    if isinstance(line[j], int):
+                        line[j] += line[i + 1]
+                        break
+                for j in range(i + 3, len(line)):
+                    if isinstance(line[j], int):
+                        line[j] += line[i + 2]
+                        break
+                line[i:i + 4] = [0]
+                break
+        else:
+            for i, c in enumerate(line):
+                if isinstance(c, int) and c >= 10:
+                    line[i:i + 1] = ["[", c // 2, -(-c // 2),"]"]
                     break
-            for j in range(i + 3, len(line)):
-                if isinstance(line[j], int):
-                    line[j] += line[i + 2]
-                    break
-            line[i:i + 4] = [0]
-            return True
-
-
-def split(line):
-    for i, c in enumerate(line):
-        if isinstance(c, int) and c >= 10:
-            line[i:i + 1] = ["[", c // 2, -(-c // 2),"]"]
-            return True
+            else:
+                return line
 
 
 def magnitude(line):
@@ -34,12 +35,6 @@ def magnitude(line):
     return line[0]
 
 
-def reduce(line):
-    while True:
-        if not explode(line) and not split(line):
-            return line
-
-
 def xd():
     data = open(str(Path(__file__).parent.absolute()) + "/input").read().splitlines()
     for i, line in enumerate(data):
@@ -48,7 +43,7 @@ def xd():
     for line in data[1:]:
         added = reduce(["[", *added, *line,"]"])
     p1 = magnitude(added)
-    p2 = max(magnitude(reduce(["[", *first, *second, "]"])) for first in data for second in data)
+    p2 = max(magnitude(reduce(["[", *f, *s, "]"])) for f in data for s in data)
     print(f"{p1=}")
     print(f"{p2=}")
 
