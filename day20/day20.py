@@ -18,9 +18,9 @@ def new_pixel(x, y, algo, img, outside):
 def apply_algo(algo, img, outside):
     new_img = []
     for y in range(-1, len(img) + 1):
-        new_line = []
+        new_line = ""
         for x in range(-1, len(img[0]) + 1):
-            new_line.append(new_pixel(x, y, algo, img, outside))
+            new_line += new_pixel(x, y, algo, img, outside)
         new_img.append(new_line)
     outside = new_pixel(-2, -2, algo, img, outside)
     return new_img, outside
@@ -28,7 +28,7 @@ def apply_algo(algo, img, outside):
 
 def xd():
     algo, img = open(str(Path(__file__).parent.absolute()) + "/input").read().split("\n\n")
-    img = [list(line) for line in img.splitlines()]
+    img = img.splitlines()
 
     outside = "."
     for i in range(50):
