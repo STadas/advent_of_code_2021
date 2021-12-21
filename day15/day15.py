@@ -1,65 +1,47 @@
 from pathlib import Path
+import heapq as hq
 
 
-def dijkfdsa(nodes, edges):
-    lengths = {n: float('inf') for n in nodes}
-    lengths[(0, 0)] = 0
+def deezstra(edges, start, goal):
+    q = [(0, start)]
+    costs = {start: 0}
+    while goal not in costs:
+        p_cost, p_from = hq.heappop(q)
+        for n, cost in edges[p_from].items():
+            if n not in costs or cost + costs[p_from] < p_cost:
+                costs[n] = cost + costs[p_from]
+                hq.heappush(q, (cost + costs[p_from], n))
+    return costs[goal]
 
-    adj = {n: {} for n in nodes}
-    for (u, v), w_uv in edges.items():
-        adj[u][v] = w_uv
 
-    temp_nodes = [n for n in nodes]
-    while len(temp_nodes) > 0:
-        upper_bounds = {v: lengths[v] for v in temp_nodes}
-        u = min(upper_bounds, key=upper_bounds.get)
-        temp_nodes.remove(u)
-
-        for v, w_uv in adj[u].items():
-            lengths[v] = min(lengths[v], lengths[u] + w_uv)
-
-    return lengths
+def gen_grid(data, x_len, y_len):
+    nodes = tuple((x, y) for y in range(y_len) for x in range(x_len))
+    edges = {n: {} for n in nodes}
+    for x, y in nodes:
+        if x > 0:
+            edges[(x, y)][(x-1, y)] = data[y][x-1]
+        if y > 0:
+            edges[(x, y)][(x, y-1)] = data[y-1][x]
+        if x < x_len - 1:
+            edges[(x, y)][(x+1, y)] = data[y][x+1]
+        if y < y_len - 1:
+            edges[(x, y)][(x, y+1)] = data[y+1][x]
+    return edges
 
 
 def xd():
     data = [[int(x) for x in line] for line in open(str(Path(__file__).parent.absolute()) + "/input").read().splitlines()]
     y_len, x_len = len(data), len(data[0])
-    nodes = tuple((x, y) for y in range(y_len) for x in range(x_len))
-    edges = {}
-    for x, y in nodes:
-        if x > 0:
-            edges[(x, y), (x-1, y)] = data[y][x-1]
-        if y > 0:
-            edges[(x, y), (x, y-1)] = data[y-1][x]
-        if x < x_len - 1:
-            edges[(x, y), (x+1, y)] = data[y][x+1]
-        if y < y_len - 1:
-            edges[(x, y), (x, y+1)] = data[y+1][x]
-    p1 = dijkfdsa(nodes, edges)[x_len - 1, y_len - 1]
+    p2_y_len, p2_x_len = y_len * 5, x_len * 5
 
+    p1 = deezstra(gen_grid(data, len(data), len(data[0])), (0, 0), (x_len - 1, y_len - 1))
     n_data = []
-    n_y_len, n_x_len = y_len * 5, x_len * 5
-    for y in range(n_y_len):
+    for y in range(p2_y_len):
         n_line = []
-        for x in range(n_x_len):
-            mod = (x // x_len) + (y // y_len)
-            n_line.append((data[y%y_len][x%x_len] + mod - 1) % 9 + 1)
+        for x in range(p2_x_len):
+            n_line.append((data[y%y_len][x%x_len] + (x // x_len) + (y // y_len) - 1) % 9 + 1)
         n_data.append(n_line)
-
-    nodes = tuple((x, y) for y in range(n_y_len) for x in range(n_x_len))
-    edges = {}
-    for x, y in nodes:
-        if x > 0:
-            edges[(x, y), (x-1, y)] = n_data[y][x-1]
-        if y > 0:
-            edges[(x, y), (x, y-1)] = n_data[y-1][x]
-        if x < n_x_len - 1:
-            edges[(x, y), (x+1, y)] = n_data[y][x+1]
-        if y < n_y_len - 1:
-            edges[(x, y), (x, y+1)] = n_data[y+1][x]
-
-    # why yes this does take around 4 hours on my laptop how could you tell?
-    p2 = dijkfdsa(nodes, edges)[n_x_len - 1, n_y_len - 1]
+    p2 = deezstra(gen_grid(n_data, p2_y_len, p2_x_len), (0, 0), (p2_x_len - 1, p2_y_len - 1))
 
     print(f"{p1=}")
     print(f"{p2=}")
