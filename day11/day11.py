@@ -27,7 +27,7 @@ def xd():
         for y, line in enumerate(data):
             for x, num in enumerate(line):
                 check_n_flash(flashes, data, y, x)
-        if p2 == 0 and len(flashes) == len(data) * len(line):
+        if p2 == 0 and len(flashes) == len(data) * len(data[0]):
             p2 = i + 1
         if i < 100:
             p1 += len(flashes)
