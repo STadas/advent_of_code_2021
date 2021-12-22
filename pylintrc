@@ -1,9 +1,0 @@
-[MESSAGES CONTROL]
-disable=
-        missing-module-docstring,
-        missing-function-docstring,
-        unspecified-encoding,
-        invalid-name,
-        too-many-locals,
-        consider-using-with,
-        consider-using-enumerate
