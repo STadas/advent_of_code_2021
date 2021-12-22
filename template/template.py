@@ -4,14 +4,11 @@ from pathlib import Path
 def xd():
     data = open(str(Path(__file__).parent.absolute()) + "/input").read()#.splitlines()
 
-    p1 = 0
     for line in data:
         print(line)
 
+    p1 = 0
     p2 = 0
-    for line in data:
-        pass
-
     print(f"{p1=}")
     print(f"{p2=}")
 
