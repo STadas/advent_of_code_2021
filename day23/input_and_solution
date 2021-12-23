@@ -1,0 +1,65 @@
+#############
+#...........#
+###D#B#B#A###
+  #C#C#D#A#
+  #########
+
+3+3+50+60+6000+600+8000+700+50+50+9+9=15534
+
+3+3+40+40+6000+600+30+40+8000+700+9+9=15474
+
+6000+8000+600+700
+9+9+50+3+3+20+30+60 = 15484
+
+9000+5000+800+500
+9+9+40+3+3+20+30+60 = 15474
+B=150
+A=24
+
+9+40+40+300+30+40+3+6000+300+8000+700+4+8 = 15474
+B=150
+A=24
+
+8+20+300+30+4+40+6000+300+8000+700+60+3+9 = 15474 close?
+B=150
+A=24
+
+8000+6000+600+700
+3+3+40+40+30+40+9+9
+B=150
+A=24
+
+at this point i was fairly confident that it's just a few A steps lower,
+so after trying 15474 i guessed 15473, 15472, the last one being the answer.
+
+p2
+#############
+#...........#
+###D#B#B#A###
+  #D#C#B#A#
+  #D#B#A#C#
+  #C#C#D#A#
+  #########
+
+ideally there's only 7 + 3 * 11 D movements (which adds up to 40000 energy)
+but i doubt that'll work out as easily as it did for p1
+
+9+9+500+5+11000+11000+11000+900+5+5+70+70+9+5000+500+4000+8+700+20+600+60+700+50+60+50+50
+=46380
+so far the 46380 attempt's start is the only one that doesn't result in a dead-lock.
+
+after checking, the answer is between:
+44380 ('too low' message) < (45380, 46280 no extra message) < 46380 ('too high' message)
+
+so doing more than the ideal number of D movements is likely necessary, as it's +2 in the 46380 attempt
+
+trying the previous attempt again (the only working initial route so far)
+but with a different order of taking out the D column,
+which should reduce energy usage significantly towards the end
+instead of doing A-left A-left C-right A-right, doing A-left A-right C-right A-left
+
+9+4+400+11+11000+11000+11000+900+5+5+70+70+9+5000+500+4000+600+9+20+600+60+700+50+60+50+50
+=46182
+
+p1=15472
+p2=46182
